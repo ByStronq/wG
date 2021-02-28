@@ -1,0 +1,126 @@
+{
+    "btnPauseDesc": {
+        "🇹🇷": "Şarkıyı durdur ve devam ettir.",
+        "🇬🇧": "Stop and continue the song.",
+        "🇵🇱": "Zatrzymaj się i kontynuuj piosenkę.",
+        "🇩🇪": "Stoppen Sie das Lied und fahren Sie fort.",
+        "🇷🇺": "Остановите песню и продолжайте.",
+        "🇨🇳": "停止播放歌曲，然後繼續。"
+    },
+    "btnStopDesc": {
+        "🇹🇷": "Kuyruğu durdur ve boşalt.",
+        "🇬🇧": "Stop and empty the queue.",
+        "🇵🇱": "Zatrzymaj i opróżnij kolejkę.",
+        "🇩🇪": "Stoppen Sie und leeren Sie die Warteschlange.",
+        "🇷🇺": "Остановите и очистите очередь.",
+        "🇨🇳": "停止並清空隊列。"
+    },
+    "btnSkipDesc": {
+        "🇹🇷": "Şarkıyı atla.",
+        "🇬🇧": "Skip the song.",
+        "🇵🇱": "Pomiń piosenkę.",
+        "🇩🇪": "Überspringe das Lied.",
+        "🇷🇺": "Пропустить песню.",
+        "🇨🇳": "跳過這首歌。"
+    },
+    "btnLoopDesc": {
+        "🇹🇷": "Döngü modları arasında geçiş yap.",
+        "🇬🇧": "Switch between looping modes.",
+        "🇵🇱": "Przełączaj się między trybami zapętlenia.",
+        "🇩🇪": "Wechseln Sie zwischen den Schleifenmodi.",
+        "🇷🇺": "Переключение между режимами зацикливания.",
+        "🇨🇳": "在循環模式之間切換。"
+    },
+    "btnShuffleDesc": {
+        "🇹🇷": "Kuyruğu karıştır.",
+        "🇬🇧": "Stir the queue.",
+        "🇵🇱": "Wymieszaj kolejkę.",
+        "🇩🇪": "Rühren Sie die Warteschlange.",
+        "🇷🇺": "Перемешайте очередь.",
+        "🇨🇳": "攪拌隊列。"
+    },
+    "btnFavDesc": {
+        "🇹🇷": "Sana özel oynatma listesine şarkıyı ekle.",
+        "🇬🇧": "Add the song to your personal playlist.",
+        "🇵🇱": "Dodaj utwór do swojej osobistej listy odtwarzania.",
+        "🇩🇪": "Fügen Sie das Lied Ihrer persönlichen Wiedergabeliste hinzu.",
+        "🇷🇺": "Добавьте песню в свой личный плейлист.",
+        "🇨🇳": "將歌曲添加到您的個人播放列表。"
+    },
+    "btnUnFavDesc": {
+        "🇹🇷": "Sana özel oynatma listesinden şarkıyı kaldır.",
+        "🇬🇧": "Remove the song from your personal playlist.",
+        "🇵🇱": "Usuń utwór z osobistej listy odtwarzania.",
+        "🇩🇪": "Entfernen Sie das Lied aus Ihrer persönlichen Wiedergabeliste.",
+        "🇷🇺": "Удалите песню из личного списка воспроизведения.",
+        "🇨🇳": "從您的個人播放列表中刪除歌曲。"
+    },
+    "btnVolIncDesc": {
+        "🇹🇷": "Botun sesini herkes için %10 artır.",
+        "🇬🇧": "Increase the volume of the bot by 10% for everyone.",
+        "🇵🇱": "Zwiększ głośność bota o 10% dla wszystkich.",
+        "🇩🇪": "Erhöhen Sie das Volumen des Bots für alle um 10%.",
+        "🇷🇺": "Увеличьте громкость бота на 10% для всех.",
+        "🇨🇳": "使所有人的漫遊器數量增加10％。"
+    },
+    "btnVolDecDesc": {
+        "🇹🇷": "Botun sesini herkes için %10 azalt.",
+        "🇬🇧": "Decrease the volume of the bot by 10% for everyone.",
+        "🇵🇱": "Zmniejsz głośność bota o 10% dla wszystkich.",
+        "🇩🇪": "Verringern Sie das Volumen des Bots für alle um 10%.",
+        "🇷🇺": "Уменьшите громкость бота на 10% для всех.",
+        "🇨🇳": "將所有人的漫遊器體積減少10％。"
+    },
+    "btnDownDesc": {
+        "🇹🇷": "Çalan müziği indir.",
+        "🇬🇧": "Download the music that is playing.",
+        "🇵🇱": "Pobierz odtwarzaną muzykę.",
+        "🇩🇪": "Laden Sie die Musik herunter, die gerade abgespielt wird.",
+        "🇷🇺": "Загрузите музыку, которая играет.",
+        "🇨🇳": "下載正在播放的音樂。"
+    },
+    "selectLangDesc": {
+        "🇹🇷": "Kullanmak istediğiniz dili seçiniz.",
+        "🇬🇧": "Select the language you want to use.",
+        "🇵🇱": "Wybierz język, którego chcesz używać.",
+        "🇩🇪": "Wählen Sie die Sprache aus, die Sie verwenden möchten.",
+        "🇷🇺": "Выберите язык, который хотите использовать.",
+        "🇨🇳": "選擇您要使用的語言。"
+    },
+    "playerMessage": {
+        "title": {
+            "🇹🇷": "wG Müzik Botu",
+            "🇬🇧": "wG Music Bot",
+            "🇵🇱": "wG Music Bot",
+            "🇩🇪": "wG Music Bot",
+            "🇷🇺": "wG Music Bot",
+            "🇨🇳": "wG音樂機器人"
+        },
+        "field": {
+            "name": {
+                "🇹🇷": "Butonlarla kontrol edebilirsiniz.",
+                "🇬🇧": "You can control it with buttons.",
+                "🇵🇱": "Możesz sterować za pomocą przycisków.",
+                "🇩🇪": "Sie können es mit Tasten steuern.",
+                "🇷🇺": "Вы можете управлять им с помощью кнопок.",
+                "🇨🇳": "您可以使用按鈕進行控制。"
+            },
+            "value": {
+                "🇹🇷": "Komut yazmanıza gerek yok ve ön ek yok!",
+                "🇬🇧": "You don't need to type commands and there is no prefix!",
+                "🇵🇱": "Nie musisz wpisywać poleceń i nie ma przedrostka!",
+                "🇩🇪": "Sie müssen keine Befehle eingeben und es gibt kein Präfix!",
+                "🇷🇺": "Вам не нужно набирать команды и нет префикса!",
+                "🇨🇳": "您無需鍵入命令，也沒有前綴！"
+            }
+        },
+        "footer": {
+            "🇹🇷": "Ön ek yok! Direkt linki yapıştır veya arama yap :) => İmza: ByStrong",
+            "🇬🇧": "No prefix! Paste direct link or search :) => Signature: ByStrong",
+            "🇵🇱": "Bez przedrostka! Wklej bezpośredni link lub wyszukaj :) => Podpis: ByStrong",
+            "🇩🇪": "Kein Präfix! Direkten Link einfügen oder suchen :) => Signatur: ByStrong",
+            "🇷🇺": "Без префикса! Вставьте прямую ссылку или выполните поиск :) => Подпись: ByStrong",
+            "🇨🇳": "沒有前綴！ 粘貼直接鏈接或搜索:) =>簽名：ByStrong"
+        }
+    }
+}

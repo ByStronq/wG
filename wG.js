@@ -6,6 +6,7 @@ const config = require("./config.json");
 const speech = require("@google-cloud/speech");
 
 const wG = new Discord.Client();
+const lang = require("./lang.json");
 
 const fs = require("fs");
 
@@ -277,6 +278,9 @@ wG.on('messageReactionAdd', async (react, user) => {
     if (user.id !== wG.user.id && DatabaseRW().servers.find(x => x.textChannelId === react.message.channel.id))
     {
         switch (react.emoji.name) {
+            case "🇹🇷": case "🇬🇧": case "🇵🇱": case "🇩🇪": case "🇷🇺": case "🇨🇳":
+                createChannels(react.message.guild, react.emoji.name);
+                break;
             case "⏯️":
                 eventEmitter.emit('musicPauseResumeEvent_' + react.message.guild.id);
                 break;
@@ -313,31 +317,33 @@ wG.on('messageReactionAdd', async (react, user) => {
 
 });
 
-async function createChannels(guild) {
+async function createChannels(guild, language = "🇬🇧") {
 
     let _channel, server = DatabaseRW().servers.filter(x => x.id === guild.id)[0];
     
     await guild.channels.create('🎶-wg-music', { type: 'text' }).then(channel => {
 
-        channel.setTopic('⏯️ Şarkıyı durdur ve devam ettir.\n\n' +
-                         '⏹️ Kuyruğu durdur ve boşalt.\n\n' +
-                         '⏭️ Şarkıyı atla.\n\n' +
-                         '🔄 Döngü modları arasında geçiş yap.\n\n' +
-                         '🔀 Kuyruğu karıştır.\n\n' +
-                         '⭐ Sana özel oynatma listesine şarkıyı ekle.\n\n' +
-                         '❌ Sana özel oynatma listesinden şarkıyı kaldır.\n\n' +
-                         '➕ Botun sesini herkes için %10 artır.\n\n' +
-                         '➖ Botun sesini herkes için %10 azalt.\n\n' +
-                         '⬇️ Çalan müziği indir.');
+        channel.setTopic('⏯️ ' + lang.btnPauseDesc[language] + '\n\n' +
+                         '⏹️ ' + lang.btnStopDesc[language] + '\n\n' +
+                         '⏭️ ' + lang.btnSkipDesc[language] + '\n\n' +
+                         '🔄 ' + lang.btnLoopDesc[language] + '\n\n' +
+                         '🔀 ' + lang.btnShuffleDesc[language] + '\n\n' +
+                         '⭐ ' + lang.btnFavDesc[language] + '\n\n' +
+                         '❌ ' + lang.btnUnFavDesc[language] + '\n\n' +
+                         '➕ ' + lang.btnVolIncDesc[language] + '\n\n' +
+                         '➖ ' + lang.btnVolDecDesc[language] + '\n\n' +
+                         '⬇️ ' + lang.btnDownDesc[language]);
                          
-        channel.send(new Discord.MessageAttachment().setFile('./contents/uploads/logo.png')).then(() => {
+        channel.send(new Discord.MessageAttachment().setFile('./contents/uploads/logo.png')).then(message => {
+            message.edit("***" + lang.selectLangDesc[language] + "***");
+            message.react("🇹🇷"); message.react("🇬🇧"); message.react("🇵🇱"); message.react("🇩🇪"); message.react("🇷🇺"); message.react("🇨🇳");
             channel.send(new Discord.MessageEmbed()
-            .setTitle("wG Müzik Botu")
-            .addField("Butonlarla kontrol edebilirsiniz.", "Komut yazmanıza gerek yok ve ön ek yok!")
+            .setTitle(lang.playerMessage.title[language])
+            .addField(lang.playerMessage.field.name[language], lang.playerMessage.field.value[language])
             //.attachFiles(['./contents/uploads/bg.jpg'])
             .setImage(/*'attachment://bg.jpg'*/'https://i.pinimg.com/originals/e6/0e/53/e60e531bb26f15c5f69c2cb35633bf46.jpg')
             .setColor("#c9c0ff")
-            .setFooter("Ön ek yok! Direkt linki yapıştır veya arama yap :) => İmza: ByStrong"))
+            .setFooter(lang.playerMessage.footer[language]))
             .then(message => { message.react("⏯️"); message.react("⏹️"); message.react("⏭️"); message.react("🔀"); message.react("⭐"); message.react("❌");
                                message.react("➕"); message.react("➖"); message.react("⬇️"); message.react("🔄");
                 server.playerMessageId = message.id;
