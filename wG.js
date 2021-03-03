@@ -153,14 +153,21 @@ function play(channel, thumbnailUrl) {
         let playerMessage = await wG.channels.cache.get(server.textChannelId).messages.fetch(server.playerMessageId);
         //playerMessage.attachments.clear();
         playerMessage.edit(playerMessage.embeds[0].setImage(thumbnailUrl));
-        let queue = "Kuyruktakiler:\n";
+        let queue = "";
 
-            for (let i = 0; i <= server.playlist.length - 1; i++) {
+        let editQueue = async () => {
+            for (let i = 0; i <= 9; i++) {
                 let videoInfos = await youtube.getInfo(server.playlist[i]);
-                queue += i + 1 + "." + videoInfos.videoDetails.title + "\n";
+                queue += i + 1 + ". " + videoInfos.videoDetails.title + "\n";
+                playerMessage.edit("```" + queue + "```");
             }
+            queue +=  ".\n.\n.\n" + server.playlist.length + ". ";
+            let videoInfos = await youtube.getInfo(server.playlist[server.playlist.length - 1]);
+            queue += videoInfos.videoDetails.title;
+            playerMessage.edit("```" + queue + "```");
+        };
             
-        playerMessage.edit(queue);
+        editQueue();
         let dispatcher = connection.play(stream, {
             type: "opus"
         })
