@@ -347,6 +347,7 @@ async function createChannels(guild, language = "🇬🇧") {
             channel.send(new Discord.MessageEmbed()
             .setTitle(lang.playerMessage.title[language])
             .addField(lang.playerMessage.field.name[language], lang.playerMessage.field.value[language])
+            .addField("\u200b", "[Github](https://github.com/ByStronq/wG) | [TechnoVadi](https://technovadi.com)")
             //.attachFiles(['./contents/uploads/bg.jpg'])
             .setImage(/*'attachment://bg.jpg'*/'https://i.pinimg.com/originals/e6/0e/53/e60e531bb26f15c5f69c2cb35633bf46.jpg')
             .setColor("#c9c0ff")
