@@ -32,6 +32,6 @@ $RECYCLE.BIN/
 node_modules/*
 config.json
 db.json
-googleAppCredentials.json
+googleCloud.json
 
 # End of https://www.toptal.com/developers/gitignore/api/windows
