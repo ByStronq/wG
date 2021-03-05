@@ -154,9 +154,9 @@ async function play(channel, thumbnailUrl) {
         let playerMessage = await wG.channels.cache.get(server.textChannelId).messages.fetch(server.playerMessageId);
         //playerMessage.attachments.clear();
         playerMessage.edit(playerMessage.embeds[0].setImage(thumbnailUrl));
-        let queue = "";
 
         let editQueue = async () => {
+            let queue = "";
             for (let i = 0; i <= 9; i++) {
                 if (server.playlist[i]) {
                     let videoInfos = await youtube.getInfo(server.playlist[i]);
