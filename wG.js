@@ -1,3 +1,4 @@
+const { db } = require("./firebase");
 const youtube = require("discord-ytdl-core");
 const youtubeSearch = require('ytsr');
 const youtubePlaylist = require('ytpl');
@@ -104,7 +105,7 @@ wG.on('message', async msg => {
             }
             
             msg.delete({ timeout: 2500 }).catch(err => {});
-        } else if (DatabaseRW().servers.find(x => x.textChannelId === msg.channel.id)) {
+        } else if ((await DatabaseRW()).find(x => x.textChannelId === msg.channel.id)) {
             sendMusic(msg.content, channel);
             msg.delete({ timeout: 2500 });
         }
@@ -131,18 +132,18 @@ async function sendMusic(musicString, channel) {
     }
 
     if (channel !== null) {
-        let server = DatabaseRW().servers.filter(x => x.id === channel.guild.id)[0];
+        let server = (await DatabaseRW()).filter(x => x.id === channel.guild.id)[0];
         server.playlist = urls;
 
-        DatabaseRW(true, server);
+        await DatabaseRW(true, server);
         //let videoInfos = await youtube.getInfo(server.playlist[0]);
         //play(channel, videoInfos.videoDetails.thumbnails[4].url);
         play(channel, "https://img.youtube.com/vi/" + server.playlist[0] + "/maxresdefault.jpg");
     }
 }
 
-function play(channel, thumbnailUrl) {
-    let server = DatabaseRW().servers.filter(x => x.id === channel.guild.id)[0],
+async function play(channel, thumbnailUrl) {
+    let server = (await DatabaseRW()).filter(x => x.id === channel.guild.id)[0],
         stream = youtube(server.playlist[0], {
         filter: "audioonly",
         opusEncoded: true,
@@ -157,9 +158,11 @@ function play(channel, thumbnailUrl) {
 
         let editQueue = async () => {
             for (let i = 0; i <= 9; i++) {
-                let videoInfos = await youtube.getInfo(server.playlist[i]);
-                queue += i + 1 + ". " + videoInfos.videoDetails.title + "\n";
-                playerMessage.edit("```" + queue + "```");
+                if (server.playlist[i]) {
+                    let videoInfos = await youtube.getInfo(server.playlist[i]);
+                    queue += i + 1 + ". " + videoInfos.videoDetails.title + "\n";
+                    playerMessage.edit("```" + queue + "```");
+                } else break;
             }
             queue +=  ".\n.\n.\n" + server.playlist.length + ". ";
             let videoInfos = await youtube.getInfo(server.playlist[server.playlist.length - 1]);
@@ -171,7 +174,7 @@ function play(channel, thumbnailUrl) {
         let dispatcher = connection.play(stream, {
             type: "opus"
         })
-        .on("finish", () => {
+        .on("finish", async () => {
             playerMessage.edit(playerMessage.embeds[0].setImage(/*'attachment://bg.jpg'*/'https://i.pinimg.com/originals/e6/0e/53/e60e531bb26f15c5f69c2cb35633bf46.jpg'));
             playerMessage.edit("");
             if (playerMessage.reactions.cache.find(react => react.emoji.name == "🔁")) {
@@ -181,7 +184,7 @@ function play(channel, thumbnailUrl) {
             } else {
                 server.playlist.shift();
             }
-            DatabaseRW(true, server);
+            await DatabaseRW(true, server);
 
             if (server.playlist[0]) {
                 play(channel, "https://img.youtube.com/vi/" + server.playlist[0] + "/maxresdefault.jpg");
@@ -220,6 +223,9 @@ function play(channel, thumbnailUrl) {
                             DatabaseRW(true, server);
                         });
                 /*08*/ eventEmitter.on('musicFavEvent_' + server.id, (userId, fav) => {
+                            if (!server.userPlaylists)
+                                server.userPlaylists = [];
+
                             let user = server.userPlaylists.filter(user => user.id == userId)[0];
                             if (user) {
                                 if (!user.playlist.find(x => x == server.playlist[0])) {
@@ -282,7 +288,7 @@ wG.on('messageReactionAdd', async (react, user) => {
 
     if (react.partial) { try { await react.fetch(); } catch (error) { console.error('Something went wrong when fetching the message: ', error); return; } }
 
-    if (user.id !== wG.user.id && DatabaseRW().servers.find(x => x.textChannelId === react.message.channel.id))
+    if (user.id !== wG.user.id && (await DatabaseRW()).find(x => x.textChannelId === react.message.channel.id))
     {
         switch (react.emoji.name) {
             case "🇹🇷": case "🇬🇧": case "🇵🇱": case "🇩🇪": case "🇷🇺": case "🇨🇳":
@@ -326,7 +332,7 @@ wG.on('messageReactionAdd', async (react, user) => {
 
 async function createChannels(guild, language = "🇬🇧") {
 
-    let _channel, server = DatabaseRW().servers.filter(x => x.id === guild.id)[0];
+    let _channel, server = (await DatabaseRW()).filter(x => x.id === guild.id)[0];
     
     await guild.channels.create('🎶-wg-music', { type: 'text' }).then(channel => {
 
@@ -373,9 +379,6 @@ async function createChannels(guild, language = "🇬🇧") {
             id: guild.id,
             textChannelId: _channel.id,
             playerMessageId: "",
-            playlist: [],
-            userPlaylists: [],
-            dynamicVoiceChannels: []
         };
     }
 
@@ -383,37 +386,42 @@ async function createChannels(guild, language = "🇬🇧") {
 
 }
 
-function DatabaseRW(isWrite = false, json = null) {
-    let data = fs.readFileSync('db.json', 'utf8'),
-        db = JSON.parse(data);
-
+async function DatabaseRW(isWrite = false, json = null) {
+    let serverList;
+    await db.ref('servers').once("value", servers => {
+        serverList = servers.val();
+    }, err => console.log(err));
+    
     if (json !== null) {
         if (isWrite) {
-            if (db.servers.find(x => x.id === json.id)) {
-                let index = db.servers.findIndex(x => x.id === json.id);
-                db.servers[index] = json;
+            if (serverList.find(x => x.id === json.id)) {
+                let index = serverList.findIndex(x => x.id === json.id);
+                serverList[index] = json;
             } else {
-                db.servers.push(json);
+                serverList.push(json);
             }
             
-            let dbJSON = JSON.stringify(db, null, 2);
-            fs.writeFileSync('db.json', dbJSON, 'utf8');
+            db.ref('servers').set(serverList);
             console.log(`Database updated with ${JSON.stringify(json)}`);
         } else {
             
         }
     } else {
-        return db;
+        return serverList;
     }
 }
 
 /***** DYNAMIC VOICE CHANNEL *****/
 
-wG.on('voiceStateUpdate', (oldMember, newMember) => {
+wG.on('voiceStateUpdate', async (oldMember, newMember) => {
     let newUserChannel = newMember.channelID,
         oldUserChannel = oldMember.channelID,
-        dynamicVoiceChannel = DatabaseRW().servers.filter(x => x.id === newMember.guild.id)[0]
-                                .dynamicVoiceChannels.filter(x => x === newUserChannel)[0];
+        server = (await DatabaseRW()).filter(x => x.id === newMember.guild.id)[0];
+
+            if (!server.dynamicVoiceChannels)
+                server.dynamicVoiceChannels = [];
+        
+    let dynamicVoiceChannel =  server.dynamicVoiceChannels.filter(x => x === newUserChannel)[0];
 
     if (dynamicVoiceChannel)
     {
@@ -487,11 +495,15 @@ function ArrayDuplicateCounter(arr)
     return resultArr;
 }
 
-function setDynVC(guildId, voiceChId, del = false)
+async function setDynVC(guildId, voiceChId, del = false)
 {
     if (voiceChId !== null) {
-        let server = DatabaseRW().servers.filter(x => x.id === guildId)[0],
-            dynVoiceChs = server.dynamicVoiceChannels;
+        let server = (await DatabaseRW()).filter(x => x.id === guildId)[0];
+
+            if (!server.dynamicVoiceChannels)
+                server.dynamicVoiceChannels = [];
+
+        let dynVoiceChs = server.dynamicVoiceChannels;
     
         if (del) {
             server.dynamicVoiceChannels = dynVoiceChs.filter(x => x !== voiceChId);

@@ -7,10 +7,11 @@ The settings file of the application
     {
         "token": "Discord Bot API Key",
         "prefix": "/",
-        "GOOGLE_APPLICATION_CREDENTIALS": "googleCloud.json"
+        "GOOGLE_APPLICATION_CREDENTIALS": "googleCloud.json",
+        "firebaseDbUrl": "https://*.firebasedatabase.app"
     }
-### ***db.json:***
-This json file is a file-based database that holds discord server information.
+### ***firebase.json:***
+This json file is the real-time firebase database service account information that holds discord server information. Blank database instance:
 
     {
       "servers": []
