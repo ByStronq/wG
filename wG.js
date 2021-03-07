@@ -156,18 +156,46 @@ async function play(channel, thumbnailUrl) {
         playerMessage.edit(playerMessage.embeds[0].setImage(thumbnailUrl));
 
         let editQueue = async () => {
-            let queue = "";
-            for (let i = 0; i <= 9; i++) {
-                if (server.playlist[i]) {
-                    let videoInfos = await youtube.getInfo(server.playlist[i]);
-                    queue += i + 1 + ". " + videoInfos.videoDetails.title + "\n";
+            let queue = playerMessage.content;
+            if (queue == "")
+            {
+                for (let i = 0; i <= 8; i++) {
+                    if (server.playlist[i]) {
+                        let videoInfos = await youtube.getInfo(server.playlist[i]);
+                        queue += i + 1 + ". " + videoInfos.videoDetails.title + "\n";
+                        playerMessage.edit("```" + queue + "```");
+                    } else break;
+                }
+            } else {
+                let queueArr = queue.split('\n');
+                queue = "";
+                queueArr.shift();
+                queueArr.pop();
+                queueArr = queueArr.filter(x => x != ".");
+
+                for (let i = 0; i <= 7; i++)
+                {
+                    if (queueArr[i]) {
+                        queue += queueArr[i].replace(queueArr[i].charAt(0), i + 1) + "\n";
+                    } else break;
+                }
+
                     playerMessage.edit("```" + queue + "```");
-                } else break;
+
+                if (server.playlist[queueArr.length]) {
+                    let videoInfos = await youtube.getInfo(server.playlist[queueArr.length]);
+                    queue += queueArr.length + 1 + ". " + videoInfos.videoDetails.title + "\n";
+                    playerMessage.edit("```" + queue + "```");
+                }
             }
-            queue +=  ".\n.\n.\n" + server.playlist.length + ". ";
-            let videoInfos = await youtube.getInfo(server.playlist[server.playlist.length - 1]);
-            queue += videoInfos.videoDetails.title;
-            playerMessage.edit("```" + queue + "```");
+            
+            if (server.playlist.length > 9)
+            {
+                queue +=  (server.playlist.length >= 11 ? ".\n.\n.\n" : "") + server.playlist.length + ". ";
+                let videoInfos = await youtube.getInfo(server.playlist[server.playlist.length - 1]);
+                queue += videoInfos.videoDetails.title;
+                playerMessage.edit("```" + queue + "```");
+            }
         };
             
         editQueue();
@@ -367,7 +395,8 @@ async function createChannels(guild, language = "🇬🇧") {
         
         _channel = channel;
     }).then(() => {
-        guild.roles.cache.find(role => role.name === 'wGAdmin').delete();
+        let wGAdmin = guild.roles.cache.find(role => role.name === 'wGAdmin');
+        if (wGAdmin) wGAdmin.delete();
         guild.roles.create({ data:{name: 'wGAdmin', color: 'PURPLE'} });
     }).catch(console.error);
     
