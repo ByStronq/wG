@@ -166,11 +166,18 @@ async function play(channel, thumbnailUrl) {
                         playerMessage.edit("```" + queue + "```");
                     } else break;
                 }
+                
+                if (server.playlist.length > 9)
+                {
+                    queue +=  (server.playlist.length >= 11 ? ".\n.\n.\n" : "") + server.playlist.length + ". ";
+                    let videoInfos = await youtube.getInfo(server.playlist[server.playlist.length - 1]);
+                    queue += videoInfos.videoDetails.title;
+                    playerMessage.edit("```" + queue + "```");
+                }
             } else {
-                let queueArr = queue.split('\n');
+                let queueArr = queue.split('\n'), lastVideo = queueArr.pop();
                 queue = "";
                 queueArr.shift();
-                queueArr.pop();
                 queueArr = queueArr.filter(x => x != ".");
 
                 for (let i = 0; i <= 7; i++)
@@ -185,16 +192,13 @@ async function play(channel, thumbnailUrl) {
                 if (server.playlist[queueArr.length]) {
                     let videoInfos = await youtube.getInfo(server.playlist[queueArr.length]);
                     queue += queueArr.length + 1 + ". " + videoInfos.videoDetails.title + "\n";
-                    playerMessage.edit("```" + queue + "```");
                 }
-            }
-            
-            if (server.playlist.length > 9)
-            {
-                queue +=  (server.playlist.length >= 11 ? ".\n.\n.\n" : "") + server.playlist.length + ". ";
-                let videoInfos = await youtube.getInfo(server.playlist[server.playlist.length - 1]);
-                queue += videoInfos.videoDetails.title;
-                playerMessage.edit("```" + queue + "```");
+
+                if (server.playlist.length > 9) {
+                    queue += (server.playlist.length >= 11 ? ".\n.\n.\n" : "") + lastVideo.replace(lastVideo.charAt(0), server.playlist.length);
+                }
+
+                    playerMessage.edit("```" + queue + "```");
             }
         };
             
