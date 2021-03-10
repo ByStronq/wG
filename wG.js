@@ -114,26 +114,29 @@ wG.on('message', async msg => {
 });
 
 async function sendMusic(musicString, channel) {
-    let urls = [];
-    if (youtube.validateURL(musicString)) {
-        let url = musicString;
-        if (youtubePlaylist.validateID(url)) {
-            const playlist = await youtubePlaylist(url, { pages: 1 });
-            playlist.items.map(video => {
-                urls.push(video.id);
-            });
+    let isUserPlaylist = channel.members.get(musicString),
+        urls = [];
+    if (!isUserPlaylist) {
+        if (youtube.validateURL(musicString)) {
+            let url = musicString;
+            if (youtubePlaylist.validateID(url)) {
+                const playlist = await youtubePlaylist(url, { pages: 1 });
+                playlist.items.map(video => {
+                    urls.push(video.id);
+                });
+            } else {
+                urls.push(youtube.getVideoID(url));
+            }
         } else {
-            urls.push(youtube.getVideoID(url));
+            const search = await youtubeSearch(musicString, { pages: 1 });
+                 if (search.items.length > 0)
+                     urls.push(search.items[0].id);
         }
-    } else {
-        const search = await youtubeSearch(musicString, { pages: 1 });
-             if (search.items.length > 0)
-                 urls.push(search.items[0].id);
     }
 
     if (channel !== null) {
         let server = (await DatabaseRW()).filter(x => x.id === channel.guild.id)[0];
-        server.playlist = urls;
+        server.playlist = isUserPlaylist ? server.userPlaylists.find(user => user.id == musicString).playlist : urls;
 
         await DatabaseRW(true, server);
         //let videoInfos = await youtube.getInfo(server.playlist[0]);
@@ -320,7 +323,9 @@ wG.on('messageReactionAdd', async (react, user) => {
 
     if (react.partial) { try { await react.fetch(); } catch (error) { console.error('Something went wrong when fetching the message: ', error); return; } }
 
-    if (user.id !== wG.user.id && (await DatabaseRW()).find(x => x.textChannelId === react.message.channel.id))
+    let server = (await DatabaseRW()).find(x => x.textChannelId === react.message.channel.id);
+
+    if (user.id !== wG.user.id && server)
     {
         switch (react.emoji.name) {
             case "🇹🇷": case "🇬🇧": case "🇵🇱": case "🇩🇪": case "🇷🇺": case "🇨🇳":
@@ -342,7 +347,14 @@ wG.on('messageReactionAdd', async (react, user) => {
                 eventEmitter.emit('musicShuffleEvent_' + react.message.guild.id);
                 break;
             case "⭐":
-                eventEmitter.emit('musicFavEvent_' + react.message.guild.id, user.id, true);
+                if (!server.playlist) {
+                    let voiceChannel = wG.guilds.cache.get(react.message.guild.id)
+                                         .members.cache.get(user.id)
+                                         .voice.channel;
+                    sendMusic(user.id, voiceChannel);
+                } else {
+                    eventEmitter.emit('musicFavEvent_' + react.message.guild.id, user.id, true);
+                }
                 break;
             case "❌":
                 eventEmitter.emit('musicFavEvent_' + react.message.guild.id, user.id, false);
