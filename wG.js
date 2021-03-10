@@ -178,7 +178,7 @@ async function play(channel, thumbnailUrl) {
                     playerMessage.edit("```" + queue + "```");
                 }
             } else {
-                let queueArr = queue.split('\n'), lastVideo = queueArr.pop();
+                let queueArr = queue.split('\n'), lastVideo = queueArr.pop().split('```')[0];
                 queue = "";
                 queueArr.shift();
                 queueArr = queueArr.filter(x => x != ".");
@@ -198,7 +198,7 @@ async function play(channel, thumbnailUrl) {
                 }
 
                 if (server.playlist.length > 9) {
-                    queue += (server.playlist.length >= 11 ? ".\n.\n.\n" : "") + lastVideo.replace(lastVideo.charAt(0), server.playlist.length);
+                    queue += (server.playlist.length >= 11 ? ".\n.\n.\n" : "") + server.playlist.length + lastVideo.slice(lastVideo.indexOf('.'));
                 }
 
                     playerMessage.edit("```" + queue + "```");
