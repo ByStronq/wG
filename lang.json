@@ -87,6 +87,64 @@
         "🇷🇺": "Выберите язык, который хотите использовать.",
         "🇨🇳": "選擇您要使用的語言。"
     },
+    "dynVcMessage": {
+        "fields": [
+            {
+                "name": {
+                    "🇹🇷": "⚡: Dinamik bir ses kanalı oluşturun",
+                    "🇬🇧": "⚡: Create a dynamic voice channel",
+                    "🇵🇱": "⚡: Utwórz dynamiczny kanał głosowy",
+                    "🇩🇪": "⚡: Erstellen Sie einen dynamischen Sprachkanal",
+                    "🇷🇺": "⚡: Создайте динамический звуковой канал",
+                    "🇨🇳": "⚡: 創建一個動態聲音通道"
+                },
+                "value": {
+                    "🇹🇷": "Ses kanalının adı kanalda bulunan üyelerin oynadığı oyunlara göre şekillenir.",
+                    "🇬🇧": "The name of the voice channel is shaped according to the games played by the members of the channel.",
+                    "🇵🇱": "Nazwa kanału głosowego jest kształtowana zgodnie z grami rozgrywanymi przez członków kanału.",
+                    "🇩🇪": "Der Name des Sprachkanals richtet sich nach den Spielen der Mitglieder des Kanals.",
+                    "🇷🇺": "Название голосового канала формируется в соответствии с играми, в которые играют участники канала.",
+                    "🇨🇳": "語音通道的名稱根據該通道成員玩的遊戲而定。"
+                }
+            },
+            {
+                "name": {
+                    "🇹🇷": "✔️: Dinamik ses kanalı ayarla",
+                    "🇬🇧": "✔️: Set dynamic voice channel",
+                    "🇵🇱": "✔️: Ustaw dynamiczny kanał głosowy",
+                    "🇩🇪": "✔️: Stellen Sie den dynamischen Sprachkanal ein",
+                    "🇷🇺": "✔️: Установить динамический голосовой канал",
+                    "🇨🇳": "✔️: 設置動態語音通道"
+                },
+                "value": {
+                    "🇹🇷": "Şu anda bağlı olduğunuz ses kanalını dinamik ses kanalı olarak ayarlar.",
+                    "🇬🇧": "Sets the voice channel you are currently connected to as the dynamic voice channel.",
+                    "🇵🇱": "Ustawia kanał głosowy, z którym jesteś aktualnie połączony, jako dynamiczny kanał głosowy.",
+                    "🇩🇪": "Legt den Sprachkanal, mit dem Sie gerade verbunden sind, als dynamischen Sprachkanal fest.",
+                    "🇷🇺": "Устанавливает голосовой канал, к которому вы в настоящее время подключены, как динамический голосовой канал.",
+                    "🇨🇳": "將當前連接的語音通道設置為動態語音通道。"
+                }
+            },
+            {
+                "name": {
+                    "🇹🇷": "❌: Dinamik ses kanalı özelliğini kapat",
+                    "🇬🇧": "❌: Turn off dynamic sound channel feature",
+                    "🇵🇱": "❌: Wyłącz funkcję kanału dynamicznego dźwięku",
+                    "🇩🇪": "❌: Deaktivieren Sie die Funktion für dynamische Soundkanäle",
+                    "🇷🇺": "❌: Отключить функцию динамического звукового канала",
+                    "🇨🇳": "❌: 關閉動態聲音通道功能"
+                },
+                "value": {
+                    "🇹🇷": "Şu anda bağlı olduğunuz dinamik ses kanalının özelliğini kapatır.",
+                    "🇬🇧": "Turns off the feature of the dynamic audio channel you are currently connected to.",
+                    "🇵🇱": "Wyłącza funkcję dynamicznego kanału audio, z którym jesteś aktualnie połączony.",
+                    "🇩🇪": "Deaktiviert die Funktion des dynamischen Audiokanals, mit dem Sie gerade verbunden sind.",
+                    "🇷🇺": "Выключает функцию динамического аудиоканала, к которому вы в данный момент подключены.",
+                    "🇨🇳": "關閉當前連接的動態音頻通道的功能。"
+                }
+            }
+        ]
+    },
     "playerMessage": {
         "title": {
             "🇹🇷": "wG Müzik Botu",

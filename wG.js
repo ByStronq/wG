@@ -6,7 +6,7 @@ const Discord = require("discord.js");
 const config = require("./config.json");
 const speech = require("@google-cloud/speech");
 
-const wG = new Discord.Client();
+const wG = new Discord.Client({ partials: ['MESSAGE', 'CHANNEL', 'REACTION'] });
 const lang = require("./lang.json");
 
 const fs = require("fs");
@@ -357,7 +357,11 @@ wG.on('messageReactionAdd', async (react, user) => {
                 }
                 break;
             case "❌":
-                eventEmitter.emit('musicFavEvent_' + react.message.guild.id, user.id, false);
+                if (react.message.id === server.playerMessageId) {
+                    eventEmitter.emit('musicFavEvent_' + react.message.guild.id, user.id, false);
+                } else {
+                    setDynVC(react.message.guild.id, react.message.guild.member(user.id).voice.channel.id, true);
+                }
                 break;
             case "➕":
                 eventEmitter.emit('musicSetVolumeEvent_' + react.message.guild.id, 0.1);
@@ -367,6 +371,14 @@ wG.on('messageReactionAdd', async (react, user) => {
                 break;
             case "⬇️":
                 eventEmitter.emit('musicDownloadEvent_' + react.message.guild.id, user);
+                break;
+            case "⚡":
+                let createdDynVCId = await react.message.guild.channels.create('Oyun Odası', { type: 'voice' });
+                setDynVC(react.message.guild.id, createdDynVCId.id);
+                break;
+            case "✔️":
+                setDynVC(react.message.guild.id, react.message.guild.member(user.id).voice.channel.id);
+                break;
         }
         
         react.users.remove(user.id);
@@ -394,6 +406,12 @@ async function createChannels(guild, language = "🇬🇧") {
         channel.send(new Discord.MessageAttachment().setFile('./contents/uploads/logo.png')).then(message => {
             message.edit("***" + lang.selectLangDesc[language] + "***");
             message.react("🇹🇷"); message.react("🇬🇧"); message.react("🇵🇱"); message.react("🇩🇪"); message.react("🇷🇺"); message.react("🇨🇳");
+            channel.send(new Discord.MessageEmbed()
+            .addField(lang.dynVcMessage.fields[0].name[language], lang.dynVcMessage.fields[0].value[language])
+            .addField(lang.dynVcMessage.fields[1].name[language], lang.dynVcMessage.fields[1].value[language])
+            .addField(lang.dynVcMessage.fields[2].name[language], lang.dynVcMessage.fields[2].value[language])
+            )
+            .then(message => { message.react("⚡"); message.react("✔️"); message.react("❌"); });
             channel.send(new Discord.MessageEmbed()
             .setTitle(lang.playerMessage.title[language])
             .addField(lang.playerMessage.field.name[language], lang.playerMessage.field.value[language])
@@ -461,37 +479,34 @@ async function DatabaseRW(isWrite = false, json = null) {
 wG.on('voiceStateUpdate', async (oldMember, newMember) => {
     let newUserChannel = newMember.channelID,
         oldUserChannel = oldMember.channelID,
-        server = (await DatabaseRW()).filter(x => x.id === newMember.guild.id)[0];
+        server = (await DatabaseRW()).find(x => x.id === newMember.guild.id);
 
             if (!server.dynamicVoiceChannels)
                 server.dynamicVoiceChannels = [];
         
-    let dynamicVoiceChannel =  server.dynamicVoiceChannels.filter(x => x === newUserChannel)[0];
+    let oldDynamicVoiceChannel =  server.dynamicVoiceChannels.find(x => x === oldUserChannel);
+    let newDynamicVoiceChannel =  server.dynamicVoiceChannels.find(x => x === newUserChannel);
 
-    if (dynamicVoiceChannel)
-    {
-        const channel = wG.channels.cache.get(dynamicVoiceChannel);
-        
-        if(newUserChannel === null){
-            
-            console.log("Exited the room");
-            channel.setName("Oyun Odası");
-      
+    if(newUserChannel && newDynamicVoiceChannel) {
+        SetDynVCName(newMember);
+    } else if(!newUserChannel && oldDynamicVoiceChannel) {
+        if (oldMember.channel.members.size == 0) {
+            setDynVC(oldMember.guild.id, oldUserChannel, true);
+            oldMember.channel.delete();
         } else {
-            try
-            {
-                let gamesPlayed = GetAllUsersGames(newMember.guild.id, channel.id);
-                let game = gamesPlayed[0].name;
-                channel.setName(game).catch(console.error);
-                console.log(channel.name + " " + game + " olarak değiştirildi");
-            }
-            catch
-            {
-                console.log("No one playing a game!");
-            }
+            SetDynVCName(oldMember);
         }
     }
 });
+
+function SetDynVCName(member) {
+    let gamePlayed = GetAllUsersGames(member.guild.id, member.channel.id)[0];
+    if (gamePlayed) {
+        let game = gamePlayed.name;
+        member.channel.setName(game).catch(console.error);
+        console.log(member.channel.name + " " + game + " olarak değiştirildi");
+    } else console.log("No one playing game!");
+}
 
 function GetAllUsersGames(guildId, filterVC = null){
 
@@ -537,7 +552,7 @@ function ArrayDuplicateCounter(arr)
         previousValue = arrItem;
     });
 
-    return resultArr;
+    return resultArr.sort((a,b) => b.counter - a.counter);
 }
 
 async function setDynVC(guildId, voiceChId, del = false)
