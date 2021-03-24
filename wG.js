@@ -80,7 +80,7 @@ wG.on('guildMemberSpeaking', async (member, speaking) => {
 
 wG.on('guildCreate', guild => createChannels(guild));
 wG.on('message', async msg => {
-    if (msg.channel.type != "dm" && !msg.member.user.bot)
+    if (msg.channel.type == "text" && msg.author && !msg.author.bot)
     {
         let channel = msg.member.voice.channel;
     
@@ -154,7 +154,8 @@ async function play(channel, thumbnailUrl) {
     });
     
     channel.join().then(async connection => {
-        let playerMessage = await wG.channels.cache.get(server.textChannelId).messages.fetch(server.playerMessageId);
+        let playerMessage = await wG.channels.cache.get(server.textChannelId).messages.fetch(server.playerMessageId),
+            isQueuePrintFinished = false;
         //playerMessage.attachments.clear();
         playerMessage.edit(playerMessage.embeds[0].setImage(thumbnailUrl));
 
@@ -175,8 +176,7 @@ async function play(channel, thumbnailUrl) {
                     queue +=  (server.playlist.length >= 11 ? ".\n.\n.\n" : "") + server.playlist.length + ". ";
                     let videoInfos = await youtube.getInfo(server.playlist[server.playlist.length - 1]);
                     queue += videoInfos.videoDetails.title;
-                    playerMessage.edit("```" + queue + "```");
-                }
+                } playerMessage.edit("```" + queue + "```").then(() => isQueuePrintFinished = true);
             } else {
                 let queueArr = queue.split('\n'), lastVideo = queueArr.pop().split('```')[0];
                 queue = "";
@@ -201,13 +201,35 @@ async function play(channel, thumbnailUrl) {
                     queue += (server.playlist.length >= 11 ? ".\n.\n.\n" : "") + server.playlist.length + lastVideo.slice(lastVideo.indexOf('.'));
                 }
 
-                    playerMessage.edit("```" + queue + "```");
+                    playerMessage.edit("```" + queue + "```").then(() => isQueuePrintFinished = true);
             }
         };
             
         editQueue();
+        let playedVideoInfos = await youtube.getInfo(server.playlist[0]);
         let dispatcher = connection.play(stream, {
             type: "opus"
+        })
+        .on("speaking", async () => {
+            let streamTime = dispatcher.streamTime;
+            if (streamTime % 5000 == 0 && isQueuePrintFinished) {
+                let currentSecond = streamTime / 1000,
+                    queue = playerMessage.content,
+                    queueArr = queue.split('\n');
+                queue = "";
+                if (!queueArr[queueArr.length - 1].includes("```")) {
+                    queueArr.pop();
+                }
+                queueArr.forEach(video => queue += video + "\n");
+                let totalSeconds = playedVideoInfos.videoDetails.lengthSeconds;
+                for (let i = 1; i <= 30; i++)
+                {
+                    queue += i == Math.round(30 * currentSecond / totalSeconds) ? "⚪" : "─";
+                }
+                queue += " " + Math.floor(currentSecond / 60) + ":" + currentSecond % 60;
+                queue += " / " + Math.floor(totalSeconds / 60) + ":" + totalSeconds % 60;
+                playerMessage.edit(queue);
+            }
         })
         .on("finish", async () => {
             playerMessage.edit(playerMessage.embeds[0].setImage(/*'attachment://bg.jpg'*/'https://i.pinimg.com/originals/e6/0e/53/e60e531bb26f15c5f69c2cb35633bf46.jpg'));
