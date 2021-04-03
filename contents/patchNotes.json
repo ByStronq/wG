@@ -1,0 +1,38 @@
+{
+    "content": "@everyone",
+    "files": [{
+      "attachment": "contents/uploads/logo.png",
+      "name": "logo.png"
+    }],
+    "embed": {
+      "title": "Oyun ses kanalları silindi!",
+      "description": "Geçici ses kanalları eklendi!",
+      "color": 8173327,
+      "footer": {
+        "icon_url": "attachment://logo.png",
+        "text": "Ses kanalında kimse kalmadığında kendini imha eder :)"
+      },
+      "thumbnail": {
+        "url": "attachment://logo.png"
+      },
+      "author": {
+        "name": "wG Discord BOT Yama Notları",
+        "url": "https://technovadi.com/",
+        "icon_url": "attachment://logo.png"
+      },
+      "fields": [
+        {
+          "name": "🤔",
+          "value": "**\"Geçici Ses Kanalları\"** kategorisindeki **\"Kanal Oluştur\"** ses kanalına katılarak ses kanalı oluşturabilirsiniz."
+        },
+        {
+          "name": "🎮",
+          "value": "Oluşan kanalın adı oynadığınız oyunun ismini alır."
+        },
+        {
+          "name": "👤",
+          "value": "Eğer bir oyunda değilseniz nickname'iniz ile oluşacaktır!"
+        }
+      ]
+    }
+  }
