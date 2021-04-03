@@ -249,36 +249,36 @@ async function play(channel, thumbnailUrl) {
             }
         });
             /***** REMOVE ALL LISTENERS *****/
-                /*01*/ eventEmitter.removeAllListeners('musicPauseEvent_' + server.id);
-                /*02*/ eventEmitter.removeAllListeners('musicResumeEvent_' + server.id);
-                /*03*/ eventEmitter.removeAllListeners('musicPauseResumeEvent_' + server.id);
-                /*04*/ eventEmitter.removeAllListeners('musicStopEvent_' + server.id);
-                /*05*/ eventEmitter.removeAllListeners('musicNextEvent_' + server.id);
-                /*06*/ eventEmitter.removeAllListeners('musicSetVolumeEvent_' + server.id);
-                /*07*/ eventEmitter.removeAllListeners('musicShuffleEvent_' + server.id);
-                /*08*/ eventEmitter.removeAllListeners('musicFavEvent_' + server.id);
-                /*09*/ eventEmitter.removeAllListeners('musicLoopModeEvent_' + server.id);
-                /*10*/ eventEmitter.removeAllListeners('musicDownloadEvent_' + server.id);
+                /*01*/ eventEmitter.removeAllListeners('musicPauseEvent_' + channel.guild.id);
+                /*02*/ eventEmitter.removeAllListeners('musicResumeEvent_' + channel.guild.id);
+                /*03*/ eventEmitter.removeAllListeners('musicPauseResumeEvent_' + channel.guild.id);
+                /*04*/ eventEmitter.removeAllListeners('musicStopEvent_' + channel.guild.id);
+                /*05*/ eventEmitter.removeAllListeners('musicNextEvent_' + channel.guild.id);
+                /*06*/ eventEmitter.removeAllListeners('musicSetVolumeEvent_' + channel.guild.id);
+                /*07*/ eventEmitter.removeAllListeners('musicShuffleEvent_' + channel.guild.id);
+                /*08*/ eventEmitter.removeAllListeners('musicFavEvent_' + channel.guild.id);
+                /*09*/ eventEmitter.removeAllListeners('musicLoopModeEvent_' + channel.guild.id);
+                /*10*/ eventEmitter.removeAllListeners('musicDownloadEvent_' + channel.guild.id);
             /***** REMOVE ALL LISTENERS *****/
             
             /***** ADD LISTENER *****/
-                /*01*/ eventEmitter.on('musicPauseEvent_' + server.id, () => dispatcher.pause());
-                /*02*/ eventEmitter.on('musicResumeEvent_' + server.id, () => dispatcher.resume());
-                /*03*/ eventEmitter.on('musicPauseResumeEvent_' + server.id, () => dispatcher.paused ? dispatcher.resume() : dispatcher.pause());
-                /*04*/ eventEmitter.on('musicStopEvent_' + server.id, () => {
+                /*01*/ eventEmitter.on('musicPauseEvent_' + channel.guild.id, () => dispatcher.pause());
+                /*02*/ eventEmitter.on('musicResumeEvent_' + channel.guild.id, () => dispatcher.resume());
+                /*03*/ eventEmitter.on('musicPauseResumeEvent_' + channel.guild.id, () => dispatcher.paused ? dispatcher.resume() : dispatcher.pause());
+                /*04*/ eventEmitter.on('musicStopEvent_' + channel.guild.id, () => {
                             playerMessage.edit(playerMessage.embeds[0].setImage(/*'attachment://bg.jpg'*/'https://i.hizliresim.com/CjbyP6.png'));
                             playerMessage.edit("");
                             server.playlist = [];
                             DatabaseRW(channel.guild.id, server);
                             dispatcher.destroy();
                         });
-                /*05*/ eventEmitter.on('musicNextEvent_' + server.id, () => dispatcher.emit('finish'));
-                /*06*/ eventEmitter.on('musicSetVolumeEvent_' + server.id, (vol) => dispatcher.setVolume(dispatcher.volume + vol));
-                /*07*/ eventEmitter.on('musicShuffleEvent_' + server.id, () => {
+                /*05*/ eventEmitter.on('musicNextEvent_' + channel.guild.id, () => dispatcher.emit('finish'));
+                /*06*/ eventEmitter.on('musicSetVolumeEvent_' + channel.guild.id, (vol) => dispatcher.setVolume(dispatcher.volume + vol));
+                /*07*/ eventEmitter.on('musicShuffleEvent_' + channel.guild.id, () => {
                             shuffle(server.playlist);
                             DatabaseRW(channel.guild.id, server);
                         });
-                /*08*/ eventEmitter.on('musicFavEvent_' + server.id, (userId, fav) => {
+                /*08*/ eventEmitter.on('musicFavEvent_' + channel.guild.id, (userId, fav) => {
                             if (!server.userPlaylists)
                                 server.userPlaylists = [];
 
@@ -303,7 +303,7 @@ async function play(channel, thumbnailUrl) {
                             }
                             DatabaseRW(channel.guild.id, server);
                         });
-                /*09*/ eventEmitter.on('musicLoopModeEvent_' + server.id, (react) => {
+                /*09*/ eventEmitter.on('musicLoopModeEvent_' + channel.guild.id, (react) => {
                             let currentLoopMode = react.emoji.name, changedLoopMode = "🔄";
                             if (currentLoopMode == "🔄") {
                                 changedLoopMode = "🔁";
@@ -313,7 +313,7 @@ async function play(channel, thumbnailUrl) {
                             react.remove();
                             playerMessage.react(changedLoopMode);
                         });
-                /*10*/ eventEmitter.on('musicDownloadEvent_' + server.id, async (user) => {
+                /*10*/ eventEmitter.on('musicDownloadEvent_' + channel.guild.id, async (user) => {
                     let videoInfos = await youtube.getInfo(server.playlist[0]);
                     user.send(new Discord.MessageAttachment().setFile(youtube.downloadFromInfo(videoInfos, { filter: "audioonly", }), videoInfos.videoDetails.title + '.mp3'));
                 });
@@ -471,7 +471,7 @@ async function createChannels(guild, language = "🇬🇧") {
 async function DatabaseRW(id = null, data = null) {
     if (id != null) {
         let dbRef = db.ref('servers/' + id);
-        if (data != null) {            
+        if (data != null) {
             dbRef.set(data);
             console.log(`Database updated with ${JSON.stringify(data)}`);
         } else {
